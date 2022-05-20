@@ -60,8 +60,8 @@ func get_pagespeed_result(url string) (models.PageSpeedResponseModel, []byte) {
 
 func main() {
 
-	_, jsonForm := get_pagespeed_result("https://aligoren.com")
+	jsonStruct, _ := get_pagespeed_result("https://aligoren.com")
 
 	// fmt.Printf("Site ID: %s", result.ID)
-	fmt.Printf("Full Result: %s", string(jsonForm))
+	fmt.Printf("Full Result: %#v", jsonStruct.LighthouseResult.Audits["unused-css-rules"].Details)
 }
