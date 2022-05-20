@@ -1,37 +1,42 @@
 package models
 
 type AuditItem struct {
-	ID               string       `json:"id"`
-	Title            string       `json:"title"`
-	Description      string       `json:"description"`
-	Score            float64      `json:"score"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+
 	ScoreDisplayMode string       `json:"ScoreDisplayMode"`
 	DisplayValue     string       `json:"displayValue"`
+	Score            float64      `json:"score"`
 	Details          AuditDetails `json:"details"`
 }
 
 type AuditDetails struct {
-	Items    []AuditDetailItems    `json:"items"`
 	Type     string                `json:"type,omitempty"`
+	Items    []AuditDetailItems    `json:"items"`
 	Headings []AuditDetailHeadings `json:"headings"`
+	Nodes    []AuditDetailNodes    `json:"nodes"`
 }
 
 type AuditDetailItems struct {
-	Source        AuditDetailItemSource `json:"source"`
-	Node          AuditDetailItemNode   `json:"node"`
-	Score         float64               `json:"score,omitempty"`
-	Url           string                `json:"url,omitempty"`
-	WastedPercent float64               `json:"wastedPercent,omitempty"`
-	TotalBytes    float64               `json:"totalBytes,omitempty"`
-	WastedBytes   float64               `json:"wastedBytes,omitempty"`
+	Score           float64               `json:"score,omitempty"`
+	WastedPercent   float64               `json:"wastedPercent,omitempty"`
+	TotalBytes      float64               `json:"totalBytes,omitempty"`
+	WastedBytes     float64               `json:"wastedBytes,omitempty"`
+	WastedWebpBytes float64               `json:"wastedWebpBytes,omitempty"`
+	Url             string                `json:"url,omitempty"`
+	IsCrossOrigin   bool                  `json:"isCrossOrigin"`
+	FromProtocol    bool                  `json:"fromProtocol"`
+	Source          AuditDetailItemSource `json:"source"`
+	Node            AuditDetailItemNode   `json:"node"`
 }
 
 type AuditDetailItemSource struct {
+	Column      float64 `json:"column,omitempty"`
+	Line        float64 `json:"line,omitempty"`
 	Url         string  `json:"url,omitempty"`
 	UrlProvider string  `json:"urlProvider,omitempty"`
-	Column      float64 `json:"column,omitempty"`
 	Type        string  `json:"type,omitempty"`
-	Line        float64 `json:"line,omitempty"`
 }
 
 type AuditDetailItemNode struct {
@@ -54,10 +59,16 @@ type AuditDetailItemNodeBoundingRect struct {
 }
 
 type AuditDetailHeadings struct {
+	Granularity float64 `json:"granularity"`
 	Text        string  `json:"text"`
 	ItemType    string  `json:"itemType"`
-	Granularity float64 `json:"granularity"`
 	Key         string  `json:"key"`
 	Label       string  `json:"label"`
 	ValueType   string  `json:"valueType"`
+}
+
+type AuditDetailNodes struct {
+	ResourceBytes float64 `json:"resourceBytes"`
+	UnusedBytes   float64 `json:"unusedBytes"`
+	Name          string  `json:"name"`
 }
