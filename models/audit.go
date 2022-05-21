@@ -1,10 +1,9 @@
 package models
 
 type AuditItem struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-
+	ID               string       `json:"id"`
+	Title            string       `json:"title"`
+	Description      string       `json:"description"`
 	ScoreDisplayMode string       `json:"ScoreDisplayMode"`
 	DisplayValue     string       `json:"displayValue"`
 	Score            float64      `json:"score"`
@@ -12,10 +11,11 @@ type AuditItem struct {
 }
 
 type AuditDetails struct {
-	Type     string                `json:"type,omitempty"`
-	Items    []AuditDetailItems    `json:"items"`
-	Headings []AuditDetailHeadings `json:"headings"`
-	Nodes    []AuditDetailNodes    `json:"nodes"`
+	Type        string                `json:"type,omitempty"`
+	Items       []AuditDetailItems    `json:"items"`
+	Headings    []AuditDetailHeadings `json:"headings"`
+	Nodes       []AuditDetailNodes    `json:"nodes"`
+	NodesObject AuditDetailNodes      `json:"nodes"`
 }
 
 type AuditDetailItems struct {

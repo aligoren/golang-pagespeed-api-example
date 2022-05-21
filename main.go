@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"pagespeed_api/models"
+	"sync"
+	"time"
 )
 
 // API Resource: https://developers.google.com/speed/docs/insights/v5/get-started
@@ -26,7 +28,7 @@ func init() {
 	ApiKey = os.Getenv("API_KEY")
 }
 
-func get_pagespeed_result(url string) (models.PageSpeedResponseModel, []byte) {
+func getPagespeedResult(url string) models.PageSpeedResponseModel {
 
 	newUrl := fmt.Sprintf(BaseUrl, url, ApiKey)
 
@@ -46,22 +48,54 @@ func get_pagespeed_result(url string) (models.PageSpeedResponseModel, []byte) {
 	err = json.Unmarshal(body, &jsonData)
 
 	if err != nil {
-		log.Fatalf("Error while unmarshaling body %v", err)
+		panic(err)
 	}
 
-	jsonForm, err := json.MarshalIndent(jsonData, "", " ")
-
-	if err != nil {
-		log.Fatalf("Error while converting structure to json form %v", err)
-	}
-
-	return jsonData, jsonForm
+	return jsonData
 }
 
-func main() {
+/*func main() {
 
 	jsonStruct, _ := get_pagespeed_result("https://aligoren.com")
 
 	// fmt.Printf("Site ID: %s", result.ID)
 	fmt.Printf("Full Result: %#v", jsonStruct.LighthouseResult.Audits["unused-css-rules"].Details)
+}*/
+
+func main() {
+	urls := []string{"https://github.com", "https://www.enuygun.com", "https://aligoren.com", "https://coderwall.com",
+		"https://eksisozluk.com", "https://medium.com", "https://stackoverflow.com", "https://www.youtube.com"}
+
+	results := make(chan models.PageSpeedResponseModel)
+	calculateTime := make(chan time.Duration)
+
+	go func() {
+		start := time.Now()
+		wg := sync.WaitGroup{}
+
+		for _, url := range urls {
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+
+				result := getPagespeedResult(url)
+				results <- result
+
+			}(url)
+		}
+		wg.Wait()
+
+		close(results)
+
+		elapsedTime := time.Since(start)
+		calculateTime <- elapsedTime
+
+		close(calculateTime)
+	}()
+
+	for result := range results {
+		fmt.Printf("%s\n", result.ID)
+	}
+
+	fmt.Printf("Elapsed time: %s", <-calculateTime)
 }
